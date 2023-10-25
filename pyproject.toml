@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vstool"
+version = "0.0.1"
+authors = [
+    {name="FEI YUAN", email="fei.yuan@bcm.edu"},
+    {name="Chong Lu", email="chong.lu@bcm.edu"},
+]
+description = "Useful functions or Classes as utilities for common virtual screening use"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = 'MIT'}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    'cmder',
+    'loguru',
+    'pandas'
+]
+[tool.flit.module]
+name = 'vstool'
