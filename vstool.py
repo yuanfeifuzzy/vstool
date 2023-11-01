@@ -282,10 +282,10 @@ def write(df, output, exit_code=1, task=0, status=0, **kwargs):
     writer(output, **kwargs)
 
 
-def submit(cmd, nodes=1, ntasks_per_node=1, cpus_per_task=1, gpus_per_task=0, job_name='vs',
-           memory='64G', day=0, hour=8, minute=0, array='', partition='', dependency='',
-           email='', email_type='ALL', mail='', mail_type='ALL', log='%x.log', log_mode='',
-           comment='', script='submit.sh', hold=False, delay=0):
+def submit(cmd, nodes=1, ntasks=1, ntasks_per_node=1, job_name='vs',
+           day=0, hour=8, minute=0, partition='', dependency='', mode='',
+           email='', email_type='ALL', mail='', mail_type='ALL', log='%x.log',
+           script='submit.sh', hold=False, delay=0, project=''):
     try:
         script = Path(script).resolve()
         logger.debug(f'Generating submission script {script}')
@@ -293,23 +293,20 @@ def submit(cmd, nodes=1, ntasks_per_node=1, cpus_per_task=1, gpus_per_task=0, jo
             o.write('#!/usr/bin/env bash\n')
             o.write('\n')
             o.write(f'#SBATCH --nodes={nodes}\n')
+            o.write(f'#SBATCH --ntasks={ntasks}\n')
             o.write(f'#SBATCH --ntasks-per-node={ntasks_per_node}\n')
-            o.write(f'#SBATCH --cpus-per-task={cpus_per_task}\n')
-
-            if gpus_per_task:
-                o.write(f'#SBATCH --gpus-per-task={gpus_per_task}\n')
+            o.write(f'#SBATCH --output={log}\n')
+            if mode:
+                o.write(f'#SBATCH --open-mode={mode}\n')
 
             o.write(f'#SBATCH --job-name={job_name}\n')
-            o.write(f'#SBATCH --mem={memory}\n')
             o.write(f'#SBATCH --time={day}-{hour}:{minute}\n')
-            
-            if delay:
-                o.write(f'#SBATCH --begin=now+{delay}{"hours" if delay > 1 else "hour"}\n')
 
-            if array:
-                o.write(f'#SBATCH --array={array}\n')
             if partition:
                 o.write(f'#SBATCH --partition={partition}\n')
+
+            if project:
+                o.write(f'#SBATCH --account {project}\n')
 
             if dependency:
                 o.write(f'#SBATCH --dependency={dependency}\n')
@@ -319,12 +316,8 @@ def submit(cmd, nodes=1, ntasks_per_node=1, cpus_per_task=1, gpus_per_task=0, jo
                 o.write(f'#SBATCH --mail-user={email or mail}\n')
                 o.write(f'#SBATCH --mail-type={email_type or mail_type}\n')
 
-            o.write(f'#SBATCH --output={log}\n')
-            if log_mode:
-                o.write(f'#SBATCH --open-mode={log_mode}\n')
-
-            if comment:
-                o.write(f'#SBATCH --comment={comment}\n')
+            if delay:
+                o.write(f'#SBATCH --begin=now+{delay}{"hours" if delay > 1 else "hour"}\n')
 
             o.write(f'\n{cmd}\n\n')
 
