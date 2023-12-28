@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Useful functions or Classes as utilities for common use
+Useful functions or Classes as utilities for using in virtual screening
 """
 
 import os
@@ -277,7 +277,7 @@ def write(df, output, exit_code=1, task=0, status=0, **kwargs):
     writers = {'.csv': partial(df.to_csv, index=False), '.csv.gz': partial(df.to_csv, index=False),
                '.tsv': partial(df.to_csv, sep='\t', index=False), '.tsv.gz': partial(df.to_csv, sep='\t', index=False),
                '.parquet': df.to_parquet, '.smi': partial(df_to_smiles, df=df), '.smiles': partial(df_to_smiles, df=df),
-               '.sdf': partial(df_to_sdf, df=df), '.sdf.gz': partial(df_to_sdf, df=df), }
+               }
     writer = writers[extension]
     writer(output, **kwargs)
 

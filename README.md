@@ -1,3 +1,3 @@
-# Utility
+# vstool
 
-Useful functions or Classes as utilities for common use
+Useful functions or Classes as utilities for using in virtual screening
