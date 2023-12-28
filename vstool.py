@@ -48,6 +48,13 @@ def error_and_exit(message, exit_code=1, task=0, status=0, **kwargs):
         error = kwargs.pop('error', message)
         task_update(task, status, error=error, **kwargs)
     sys.exit(exit_code)
+    
+
+def info_and_exit(message, exit_code=0, task=0, status=0, **kwargs):
+    logger.info(message)
+    if task:
+        task_update(task, status, **kwargs)
+    sys.exit(exit_code)
 
 
 def debug_and_exit(message, exit_code=0, task=0, status=0, **kwargs):
