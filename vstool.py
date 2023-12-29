@@ -109,6 +109,7 @@ def get_available_gpus(gpus=0, exit_code=1, task=0, status=-4):
 def get_available_cpus(cpus=0):
     cpus = min(cpus or cpu_count(), cpu_count())
     cpus = os.environ.get('SLURM_CPUS_PER_TASK', cpus)
+    logger.debug(f'Detected {cpus} available CPUs')
     return int(cpus)
 
 
@@ -283,7 +284,7 @@ def write(df, output, exit_code=1, task=0, status=0, **kwargs):
                    exit_code, task=task, status=status)
     writers = {'.csv': partial(df.to_csv, index=False), '.csv.gz': partial(df.to_csv, index=False),
                '.tsv': partial(df.to_csv, sep='\t', index=False), '.tsv.gz': partial(df.to_csv, sep='\t', index=False),
-               '.parquet': df.to_parquet, '.smi': partial(df_to_smiles, df=df), '.smiles': partial(df_to_smiles, df=df),
+               '.parquet': df.to_parquet, '.smi': partial(df_to_smiles, df=df), '.smiles': partial(df_to_smiles, df=df)
                }
     writer = writers[extension]
     writer(output, **kwargs)
@@ -372,6 +373,11 @@ def profile(task=0, status=0, error_status=0, task_name='Task'):
         return wrapper
 
     return inner
+
+
+def qvd(cmds, args, sep=' \\\n  '):
+    cmds += ['--quiet' if args.quiet else '', '--verbose' if args.verbose else '', '--debug' if args.debug else '']
+    return sep.join(str(cmd) for cmd in cmds if cmd)
 
 
 if __name__ == '__main__':
